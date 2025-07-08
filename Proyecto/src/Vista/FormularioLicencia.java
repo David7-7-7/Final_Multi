@@ -82,7 +82,7 @@ public class FormularioLicencia extends javax.swing.JFrame {
                             .addComponent(TipoLincencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Estado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(142, 142, 142)
+                        .addGap(137, 137, 137)
                         .addComponent(btnRegistrarLicencia)))
                 .addContainerGap(84, Short.MAX_VALUE))
         );

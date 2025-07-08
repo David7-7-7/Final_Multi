@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 
 
 public class Licencia {
+    //
     private int idLicencia;
     private String tipo;
     private String fechaExpedicion;
@@ -91,4 +92,6 @@ public class Licencia {
     }
     return existe;
 }
+    
+    
 }

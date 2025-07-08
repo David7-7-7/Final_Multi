@@ -74,7 +74,7 @@ public class ControladorCliente implements ActionListener {
             }
         }
 
-        // Botones del formulario de cliente
+        /// Botones del formulario de cliente
         if (objetoVista != null) {
             if (e.getSource() == objetoVista.getBtnInsertar()) {
                 insertarCliente();
