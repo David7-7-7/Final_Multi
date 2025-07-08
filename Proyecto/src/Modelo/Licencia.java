@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import java.util.Date;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.swing.table.DefaultTableModel;
 
 
 public class Licencia {
@@ -92,6 +94,48 @@ public class Licencia {
     }
     return existe;
 }
+    
+    public DefaultTableModel consultar() 
+    {
+        ConectarBD conexion = new ConectarBD();
+        String titulos[] = {"placa", "n_chasis", "modelo", "kilometraje", "id_marca", "id_color", "id_tipo_vehiculo", "id_blindaje", 
+                            "id_transmision", "id_cilindraje", "id_seguro_vehiculo", "id_estado_vehiculo", "id_proveedor", "id_sucursal"};
+        DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+
+        try 
+        {
+            Statement sentencia = conexion.getConexion().createStatement();
+            ResultSet resultado = sentencia.executeQuery("SELECT * FROM vehiculo");
+
+            while (resultado.next()) 
+            {
+                Object[] fila = new Object[14];
+
+                fila[0] = resultado.getString("placa");
+                fila[1] = resultado.getString("n_chasis");
+                fila[2] = resultado.getString("modelo");
+                fila[3] = resultado.getInt("kilometraje");
+                fila[4] = resultado.getInt("id_marca");
+                fila[5] = resultado.getInt("id_color");
+                fila[6] = resultado.getInt("id_tipo_vehiculo");
+                fila[7] = resultado.getInt("id_blindaje");
+                fila[8] = resultado.getInt("id_transmision");
+                fila[9] = resultado.getInt("id_cilindraje");
+                fila[10] = resultado.getInt("id_seguro_vehiculo");
+                fila[11] = resultado.getInt("id_estado_vehiculo");
+                fila[12] = resultado.getInt("id_proveedor");
+                fila[13] = resultado.getInt("id_sucursal");
+
+                modelo.addRow(fila);
+            }
+
+            resultado.close();
+            conexion.getConexion().close();
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error....:" + e, "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+            return modelo;
+    }
     
     
 }
