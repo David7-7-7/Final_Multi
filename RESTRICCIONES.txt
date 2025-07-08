@@ -1,0 +1,7 @@
+Entonces, cliente debe ir solo para añadir
+Consultar clientes y consultar empleados solo lo manejaria el Admin
+Modificar y eliminar clientes lo controla el Admin y cliente
+
+Cuando ingresemos con los datos del cliente entonces debe aparecer los servicion que ofrecemos
+Cuando ingresemos como empleado, debe aparecer las cosas con las que trabajara
+Cuando ingresemos como admin tenemos derecho a ver todo
