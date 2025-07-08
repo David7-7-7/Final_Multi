@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 
 public class Licencia {
-    //
+    private int puebra2;
     private int idLicencia;
     private String tipo;
     private String fechaExpedicion;
