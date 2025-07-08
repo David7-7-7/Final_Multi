@@ -1,15 +1,15 @@
 @echo off
-echo Cambiando a la rama principal...
-git checkout principal
+echo Cambiando a la rama main
+git checkout main
 
-echo Haciendo pull de la rama principal...
-git pull origin principal
+echo Haciendo pull de la rama main...
+git pull origin main
 
-echo Haciendo merge de la rama 'Sebastián'...
-git merge Sebastián
+echo Haciendo merge de la rama 'Sebastian'...
+git merge Sebastian
 
 echo Subiendo cambios a GitHub...
-git push origin principal
+git push origin main
 
 echo Fusión completada. Presiona una tecla para salir.
 pause

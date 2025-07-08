@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 
-
+/// SEBASTIAN ES UN CACORRO HIJUEPUTA OCN LA MAMA MAS TETUDA
 public class Licencia {
     private int puebra2;
     private int idLicencia;
