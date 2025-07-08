@@ -10,7 +10,6 @@ import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 
 public class Cliente {
-
     private String idCliente;
     private String documento;
     private String nombre;
