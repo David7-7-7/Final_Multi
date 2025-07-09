@@ -1,15 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Modelo;
 
-/**
- *
- * @author jefer
- */
-import java.sql.*;
-import javax.swing.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 public class SeguroVehiculo {
 
@@ -19,16 +16,14 @@ public class SeguroVehiculo {
     private Date vencimiento;
     private double costo;
 
-    // Constructor completo para inserción
     public SeguroVehiculo(String estado, String descripcion, Date vencimiento, double costo) {
         this.estado = estado;
         this.descripcion = descripcion;
         this.vencimiento = vencimiento;
         this.costo = costo;
-        this.id = -1; // Se asigna tras insertar
+        this.id = obtenerIdPorEstado(estado);
     }
 
-    // Constructor simplificado para obtener ID por estado
     public SeguroVehiculo(String estado) {
         this.estado = estado;
         this.id = obtenerIdPorEstado(estado);
@@ -95,17 +90,6 @@ public class SeguroVehiculo {
     }
 
     public static void cargarEnCombo(JComboBox<String> combo) {
-        try {
-            combo.removeAllItems();
-            ConectarBD conectar = new ConectarBD();
-            String sql = "SELECT estado FROM Seguro_vehiculo ORDER BY estado";
-            PreparedStatement ps = conectar.getConexion().prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                combo.addItem(rs.getString("estado"));
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al cargar seguros: " + e.getMessage());
-        }
+        VehiculoAtributo.cargarEnCombo(combo, "Seguro_vehiculo", "estado");
     }
 }

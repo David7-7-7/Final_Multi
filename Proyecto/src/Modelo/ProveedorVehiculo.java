@@ -1,9 +1,14 @@
 package Modelo;
 
-import java.sql.*;
-import javax.swing.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 public class ProveedorVehiculo {
+
     private int id;
     private String nombre;
     private String direccion;
@@ -19,17 +24,35 @@ public class ProveedorVehiculo {
         this.idCuenta = idCuenta;
         this.id = obtenerIdPorNombre(nombre);
     }
-    public ProveedorVehiculo(String nombre) {
-    this.nombre = nombre;
-    this.id = obtenerIdPorNombre(nombre);
-}
 
-    public int getId() { return id; }
-    public String getNombre() { return nombre; }
-    public String getDireccion() { return direccion; }
-    public String getTelefono() { return telefono; }
-    public String getCorreo() { return correo; }
-    public int getIdCuenta() { return idCuenta; }
+    public ProveedorVehiculo(String nombre) {
+        this.nombre = nombre;
+        this.id = obtenerIdPorNombre(nombre);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public int getIdCuenta() {
+        return idCuenta;
+    }
 
     public static int obtenerIdPorNombre(String nombre) {
         try {
@@ -38,7 +61,9 @@ public class ProveedorVehiculo {
             PreparedStatement ps = conectar.getConexion().prepareStatement(sql);
             ps.setString(1, nombre);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt("id_proveedor");
+            if (rs.next()) {
+                return rs.getInt("id_proveedor");
+            }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error al obtener ID del proveedor: " + e.getMessage());
         }
@@ -59,7 +84,9 @@ public class ProveedorVehiculo {
             int filas = ps.executeUpdate();
             if (filas > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) this.id = rs.getInt(1);
+                if (rs.next()) {
+                    this.id = rs.getInt(1);
+                }
                 return true;
             }
         } catch (SQLException e) {
@@ -69,15 +96,6 @@ public class ProveedorVehiculo {
     }
 
     public static void cargarEnCombo(JComboBox<String> combo) {
-        try {
-            combo.removeAllItems();
-            ConectarBD conectar = new ConectarBD();
-            String sql = "SELECT nombre FROM Proveedor_vehiculo ORDER BY nombre";
-            PreparedStatement ps = conectar.getConexion().prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) combo.addItem(rs.getString("nombre"));
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al cargar proveedores: " + e.getMessage());
-        }
+        VehiculoAtributo.cargarEnCombo(combo, "Proveedor_vehiculo", "nombre");
     }
 }

@@ -213,13 +213,7 @@ CREATE TABLE Estado_reserva (
   descripcion       VARCHAR(100)
 ) ENGINE=InnoDB;
 
-CREATE TABLE Seguro_alquiler (
-  id_seguro         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  estado            VARCHAR(50),
-  descripcion       VARCHAR(255),
-  vencimiento       DATE,
-  costo             DECIMAL(10,2)
-) ENGINE=InnoDB;
+
 
 -- Crear tabla Reserva_alquiler sin la columna id_alquiler
 CREATE TABLE Reserva_alquiler (
@@ -243,14 +237,12 @@ CREATE TABLE Alquiler (
   id_sucursal        INT UNSIGNED,
   id_medio_pago      INT UNSIGNED,
   id_estado          INT UNSIGNED,
-  id_seguro          INT UNSIGNED,
   id_descuento       INT UNSIGNED,
   FOREIGN KEY (id_vehiculo)    REFERENCES Vehiculo(placa),
   FOREIGN KEY (id_cliente)     REFERENCES Cliente(id_cliente),
   FOREIGN KEY (id_sucursal)    REFERENCES Sucursal(id_sucursal),
   FOREIGN KEY (id_medio_pago)  REFERENCES Medio_pago(id_medio_pago),
   FOREIGN KEY (id_estado)      REFERENCES Estado_alquiler(id_estado),
-  FOREIGN KEY (id_seguro)      REFERENCES Seguro_alquiler(id_seguro),
   FOREIGN KEY (id_descuento)   REFERENCES Descuento_alquiler(id_descuento)
 ) ENGINE=InnoDB;
 

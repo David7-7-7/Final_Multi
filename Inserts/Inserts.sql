@@ -92,3 +92,11 @@ INSERT INTO Vehiculo (placa, n_chasis, modelo, kilometraje, id_marca, id_color, 
     id_blindaje, id_transmision, id_cilindraje, id_seguro_vehiculo, id_estado_vehiculo, id_proveedor, id_sucursal)
 VALUES
 ('ABCS123', 'CHS123456', 'Logan 2020', 25000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
+INSERT INTO Medio_pago (descripcion) VALUES ('Efectivo'), ('Tarjeta'), ('Transferencia');
+INSERT INTO Descuento_alquiler (descripcion, valor, fecha_inicio, fecha_fin) VALUES
+('Sin descuento', 0, '2024-01-01 00:00:00', '2030-12-31 23:59:59'),
+('Promoción fin de semana', 40000, '2025-07-01 00:00:00', '2025-07-31 23:59:59'),
+('Descuento navideño', 50000, '2025-12-01 00:00:00', '2025-12-31 23:59:59'),
+('Promoción Semana Santa', 30000, '2025-04-10 00:00:00', '2025-04-20 23:59:59'),
+('Promoción aniversario', 55000, '2025-08-01 00:00:00', '2025-08-15 23:59:59');

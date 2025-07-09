@@ -1,3 +1,4 @@
+
 package Controlador;
 
 import Modelo.*;
@@ -6,23 +7,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import modelo.Vehiculos;
 
 public class ControladorCliente implements ActionListener {
 
     // Modelos
-    Ingresar objetoIngresar;
+    Usuario objetoUsuario;
     Cliente objetoModelo;
     Licencia objetoLicencia;
     CodigoPostal objetoCP;
-    Vehiculos objetoVehiculo;
+    Vehiculo objetoVehiculo;
     Empleado objetoEmpleado;
+    Alquiler objetoAlquiler;
 
     // Formularios
     FormularioIngresar objetoVIngresar;
     FormularioCliente objetoVista;
     FormularioCliente_1 objetoCliente;
     FormularioGerente objetoVGerente;
+    FormularioAlquiler objetoVAlquiler;
+    FormularioAdmin objetoVAdmin;
 
     // Datos auxiliares
     String[] datos = new String[10];
@@ -30,11 +33,11 @@ public class ControladorCliente implements ActionListener {
 
     // Constructor
     public ControladorCliente() {
-        objetoIngresar = new Ingresar();
+        objetoUsuario = new Usuario();
         objetoModelo = new Cliente();
         objetoLicencia = new Licencia();
         objetoCP = new CodigoPostal();
-        objetoVehiculo = new Vehiculos();
+        objetoVehiculo = new Vehiculo();
 
         objetoVIngresar = new FormularioIngresar();
         objetoVIngresar.setVisible(true);
@@ -45,34 +48,29 @@ public class ControladorCliente implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == objetoVIngresar.getBotonIngresar()) {
-            String tipo = objetoVIngresar.getTipoUser().getSelectedItem().toString();
             String correo = objetoVIngresar.getTxtCorreo().getText();
             String contrasena = new String(objetoVIngresar.getTxtContraseña().getPassword());
 
-            if (tipo.equals("Cliente")) {
-                if (objetoIngresar.validarCliente(correo, contrasena)) {
-                    JOptionPane.showMessageDialog(null, "¡Bienvenido Cliente!");
-                    String idCliente = objetoModelo.obtenerIDporCorreoYContraseña(correo, contrasena);
-                    mostrarFormularioClientee();
-                    objetoCliente.getTxtIdCliente().setText(idCliente);
-                } else {
-                    int respuesta = JOptionPane.showConfirmDialog(null,
-                            "Cliente no registrado. ¿Desea registrarse ahora?",
-                            "Registro requerido", JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE);
-                    if (respuesta == JOptionPane.OK_OPTION) {
-                        mostrarFormularioCliente();
-                    }
+            Usuario usuarioValidado = objetoUsuario.validarUsuario(correo, contrasena);
+
+            if (usuarioValidado != null) {
+                switch (usuarioValidado.getRol()) {
+                    case "Cliente":
+                        JOptionPane.showMessageDialog(null, "¡Bienvenido Cliente!");
+                        mostrarFormularioClientee();
+                        objetoCliente.getTxtIdCliente().setText(String.valueOf(usuarioValidado.getIdReferencia()));
+                        break;
+                    case "Empleado":
+                        JOptionPane.showMessageDialog(null, "¡Bienvenido Empleado!");
+                        mostrarFormularioEmpleado();
+                        break;
+                    case "Administrador":
+                        JOptionPane.showMessageDialog(null, "¡Bienvenido Administrador!");
+                        mostrarFormularioAdmin();
+                        break;
                 }
-            } else if (tipo.equals("Empleado")) {
-                if (objetoIngresar.validarEmpleado(correo, contrasena)) {
-                    objetoEmpleado = new Empleado();
-                    String idEmpleado = objetoEmpleado.obtenerIDporCorreoYContraseña(correo, contrasena);
-                    JOptionPane.showMessageDialog(null, "¡Bienvenido Empleado!");
-                    mostrarFormularioEmpleado();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Credenciales incorrectas para empleado.");
-                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
             }
         }
 
@@ -81,28 +79,32 @@ public class ControladorCliente implements ActionListener {
         }
 
         if (objetoVGerente != null && e.getSource() == objetoVGerente.getBotonAgregarG()) {
-           // agregarMarcaNueva();
             agregarVehiculoNuevo();
         }
         if (objetoCliente != null && e.getSource() == objetoCliente.getBotonAveriguar()) {
-        String marca = objetoCliente.getMarca().getSelectedItem().toString();
-        String color = objetoCliente.getColor().getSelectedItem().toString();
-        String tipo = objetoCliente.getTipo().getSelectedItem().toString();
-        String transmision = objetoCliente.getTransmision().getSelectedItem().toString();
-        String sucursal = objetoCliente.getSucursal().getSelectedItem().toString();
-        String blindaje = objetoCliente.getBlindaje().getSelectedItem().toString();
-        String cilindraje = objetoCliente.getCilindraje().getSelectedItem().toString();
+            MarcaVehiculo marca = new MarcaVehiculo(objetoCliente.getMarca().getSelectedItem().toString());
+            ColorVehiculoo color = new ColorVehiculoo(objetoCliente.getColor().getSelectedItem().toString());
+            TipoVehiculo tipo = new TipoVehiculo(objetoCliente.getTipo().getSelectedItem().toString());
+            TransmisionVehiculo transmision = new TransmisionVehiculo(objetoCliente.getTransmision().getSelectedItem().toString());
+            Sucursal sucursal = new Sucursal(objetoCliente.getSucursal().getSelectedItem().toString());
+            BlindajeVehiculo blindaje = new BlindajeVehiculo(objetoCliente.getBlindaje().getSelectedItem().toString());
+            CilindrajeVehiculo cilindraje = new CilindrajeVehiculo(objetoCliente.getCilindraje().getSelectedItem().toString());
 
-        boolean hayDisponible = objetoVehiculo.verificarDisponibilidadFiltrada(
-            marca, color, tipo, transmision, sucursal, blindaje, cilindraje
-        );
+            String placaDisponible = objetoVehiculo.obtenerPlacaDisponible(
+                marca, color, tipo, transmision, sucursal, blindaje, cilindraje
+            );
 
-        if (hayDisponible) {
-            JOptionPane.showMessageDialog(null, "¡Hay al menos un vehículo disponible con esas características!");
-        } else {
-            JOptionPane.showMessageDialog(null, "No hay vehículos disponibles con esos filtros.");
+            if (placaDisponible != null) {
+                JOptionPane.showMessageDialog(null, "¡Vehículo disponible! Placa: " + placaDisponible);
+                objetoCliente.getTxtPlaca().setText(placaDisponible);
+            } else {
+                JOptionPane.showMessageDialog(null, "No hay vehículos disponibles con esos filtros.");
+            }
         }
+        if (objetoCliente != null && e.getSource() == objetoCliente.getBotonAlquilar()) {
+         mostrarFormularioAlquiler();
         }
+
     }
 
     private void mostrarFormularioClientee() {
@@ -110,19 +112,19 @@ public class ControladorCliente implements ActionListener {
         objetoCliente.setVisible(true);
 
         // Cargar datos en los ComboBox del formulario
-        MarcaVehiculo.cargarMarcasEnCombo(objetoCliente.getMarca());
-        ColorVehiculoo.cargarEnCombo(objetoCliente.getColor());
-        BlindajeVehiculo.cargarEnCombo(objetoCliente.getBlindaje());
-        CilindrajeVehiculo.cargarEnCombo(objetoCliente.getCilindraje());
-        Sucursal.cargarEnCombo(objetoCliente.getSucursal());
-        TipoVehiculo.cargarEnCombo(objetoCliente.getTipo());
-        TransmisionVehiculo.cargarEnCombo(objetoCliente.getTransmision());
-        
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getMarca(), "Marca_vehiculo", "nombre_marca");
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getColor(), "Color_vehiculo", "nombre_color");
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getBlindaje(), "Blindaje_vehiculo", "descripcion");
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getCilindraje(), "Cilindraje_vehiculo", "descripcion");
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getSucursal(), "Sucursal", "nombre");
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getTipo(), "Tipo_vehiculo", "descripcion");
+        VehiculoAtributo.cargarEnCombo(objetoCliente.getTransmision(), "Transmision_vehiculo", "descripcion");
 
         // Escuchadores
         objetoCliente.getBtnModificar().addActionListener(this);
         objetoCliente.getBtnEliminar().addActionListener(this);
-        objetoCliente.getBotonAveriguar().addActionListener(this);   
+        objetoCliente.getBotonAveriguar().addActionListener(this);
+        objetoCliente.getBotonAlquilar().addActionListener(this);
     }
 
     private void mostrarFormularioCliente() {
@@ -135,7 +137,12 @@ public class ControladorCliente implements ActionListener {
         objetoVGerente = new FormularioGerente();
         objetoVGerente.setVisible(true);
         objetoVGerente.getBotonAgregarG().addActionListener(this);
-        EstadoVehiculo.cargarEnCombo(objetoVGerente.getDisponibilidad());
+        VehiculoAtributo.cargarEnCombo(objetoVGerente.getDisponibilidad(), "Estado_vehiculo", "descripcion");
+    }
+
+    private void mostrarFormularioAdmin() {
+        objetoVAdmin = new FormularioAdmin();
+        objetoVAdmin.setVisible(true);
     }
 
     private void insertarCliente() {
@@ -173,29 +180,6 @@ public class ControladorCliente implements ActionListener {
         limpiarFormularioRegistro();
     }
 
-    private void agregarMarcaNueva() {
-        if (objetoVGerente != null) {
-            String nombreMarca = objetoVGerente.getTxtMarca1().getText().trim();
-
-            if (!nombreMarca.isEmpty()) {
-                MarcaVehiculo nueva = new MarcaVehiculo(nombreMarca);
-
-                if (nueva.getId() == -1) {
-                    if (nueva.insertar()) {
-                        JOptionPane.showMessageDialog(null, "Marca agregada exitosamente.");
-                        objetoVGerente.getTxtMarca1().setText("");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error al insertar la marca.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "La marca ya existe en el sistema.");
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Ingrese el nombre de la marca.");
-            }
-        }
-    }
-
    private void agregarVehiculoNuevo() {
     try {
         String placa = objetoVGerente.getTxtPlaca1().getText().trim();
@@ -203,53 +187,28 @@ public class ControladorCliente implements ActionListener {
         String nChasis = objetoVGerente.getTxtNChasis().getText().trim();
         int kilometraje = Integer.parseInt(objetoVGerente.getTxtKm().getText().trim());
 
-        // --- Marca ---
-        String nombreMarca = objetoVGerente.getTxtMarca1().getText().trim();
-        MarcaVehiculo marca = new MarcaVehiculo(nombreMarca);
-        int idMarca = marca.getId();
-
-        if (idMarca == -1) {
-            if (marca.insertar()) {
-                idMarca = marca.getId();
-                JOptionPane.showMessageDialog(null, "Marca '" + nombreMarca + "' agregada automáticamente.");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo registrar la nueva marca.");
-                return;
-            }
+        MarcaVehiculo marca = new MarcaVehiculo(objetoVGerente.getTxtMarca1().getText().trim());
+        if (marca.getId() == -1) {
+            marca.insertar();
         }
 
-        // --- Resto de datos relacionados ---
-        int idColor = new ColorVehiculoo(objetoVGerente.getColor().getSelectedItem().toString()).getId();
-
-        if (idColor == -1) {
-            JOptionPane.showMessageDialog(null, "El color seleccionado no existe en la base de datos.");
-            return; // Cancela el proceso
-        }
-        int idBlindaje = new BlindajeVehiculo(objetoVGerente.getBlindaje().getSelectedItem().toString()).getId();
-        int idCilindraje = new CilindrajeVehiculo(objetoVGerente.getCilindraje().getSelectedItem().toString()).getId();
+        ColorVehiculoo color = new ColorVehiculoo(objetoVGerente.getColor().getSelectedItem().toString());
+        BlindajeVehiculo blindaje = new BlindajeVehiculo(objetoVGerente.getBlindaje().getSelectedItem().toString());
+        CilindrajeVehiculo cilindraje = new CilindrajeVehiculo(objetoVGerente.getCilindraje().getSelectedItem().toString());
         EstadoVehiculo estado = new EstadoVehiculo(objetoVGerente.getDisponibilidad().getSelectedItem().toString());
-        int idEstado = estado.getId();
-
-        if (idEstado == -1) {
-            if (estado.insertar()) {
-                idEstado = estado.getId();
-                JOptionPane.showMessageDialog(null, "Estado agregado automáticamente.");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo registrar el nuevo estado.");
-                return;
-            }
+        if (estado.getId() == -1) {
+            estado.insertar();
         }
-        int idProveedor = new ProveedorVehiculo(objetoVGerente.getProveedores().getSelectedItem().toString()).getId();
-        int idSeguro = new SeguroVehiculo(objetoVGerente.getSeguro().getSelectedItem().toString()).getId();
-        int idSucursal = new Sucursal(objetoVGerente.getSucursal().getSelectedItem().toString()).getId();
-        int idTipoVehiculo = new TipoVehiculo(objetoVGerente.getTipo().getSelectedItem().toString()).getId();
-        int idTransmision = new TransmisionVehiculo(objetoVGerente.getTransmision().getSelectedItem().toString()).getId();
+        ProveedorVehiculo proveedor = new ProveedorVehiculo(objetoVGerente.getProveedores().getSelectedItem().toString());
+        SeguroVehiculo seguro = new SeguroVehiculo(objetoVGerente.getSeguro().getSelectedItem().toString());
+        Sucursal sucursal = new Sucursal(objetoVGerente.getSucursal().getSelectedItem().toString());
+        TipoVehiculo tipo = new TipoVehiculo(objetoVGerente.getTipo().getSelectedItem().toString());
+        TransmisionVehiculo transmision = new TransmisionVehiculo(objetoVGerente.getTransmision().getSelectedItem().toString());
 
-        // --- Crear e insertar vehículo ---
-        Vehiculos nuevoVehiculo = new Vehiculos(
-            placa, nChasis, modelo, kilometraje, idMarca, idColor,
-            idTipoVehiculo, idBlindaje, idTransmision, idCilindraje,
-            idSeguro, idEstado, idProveedor, idSucursal
+        Vehiculo nuevoVehiculo = new Vehiculo(
+            placa, nChasis, modelo, kilometraje, marca, color,
+            tipo, blindaje, transmision, cilindraje,
+            seguro, estado, proveedor, sucursal
         );
 
         if (nuevoVehiculo.insertarVehiculo()) {
@@ -311,4 +270,14 @@ public class ControladorCliente implements ActionListener {
         objetoVista.getTxtCodigoP().setText("");
         objetoVista.getTxtContraseña().setText("");
     }
+
+    private void mostrarFormularioAlquiler() {
+    objetoVAlquiler = new FormularioAlquiler();
+    objetoVAlquiler.setVisible(true);
+
+    // Puedes precargar datos si lo deseas:
+    objetoVAlquiler.getTxtID().setText(objetoCliente.getTxtIdCliente().getText());
+    objetoVAlquiler.getTxtPlaca().setText(objetoCliente.getTxtPlaca().getText());
+
+}
 }
