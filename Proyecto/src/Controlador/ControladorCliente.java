@@ -84,6 +84,25 @@ public class ControladorCliente implements ActionListener {
            // agregarMarcaNueva();
             agregarVehiculoNuevo();
         }
+        if (objetoCliente != null && e.getSource() == objetoCliente.getBotonAveriguar()) {
+        String marca = objetoCliente.getMarca().getSelectedItem().toString();
+        String color = objetoCliente.getColor().getSelectedItem().toString();
+        String tipo = objetoCliente.getTipo().getSelectedItem().toString();
+        String transmision = objetoCliente.getTransmision().getSelectedItem().toString();
+        String sucursal = objetoCliente.getSucursal().getSelectedItem().toString();
+        String blindaje = objetoCliente.getBlindaje().getSelectedItem().toString();
+        String cilindraje = objetoCliente.getCilindraje().getSelectedItem().toString();
+
+        boolean hayDisponible = objetoVehiculo.verificarDisponibilidadFiltrada(
+            marca, color, tipo, transmision, sucursal, blindaje, cilindraje
+        );
+
+        if (hayDisponible) {
+            JOptionPane.showMessageDialog(null, "¡Hay al menos un vehículo disponible con esas características!");
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay vehículos disponibles con esos filtros.");
+        }
+        }
     }
 
     private void mostrarFormularioClientee() {

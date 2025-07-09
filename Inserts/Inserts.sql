@@ -88,3 +88,7 @@ INSERT INTO Empleado (
 INSERT INTO Empleado (
   documento, nombre, salario, cargo, telefono, direccion, correo, tipo_documento, contrasena
 ) VALUES('123456789', 'Carlos Pérez', 2500000.00, 'Gerente', '3101234567', 'Cra 10 #45-23', 'b@', 'Cédula de Ciudadanía', '1');
+INSERT INTO Vehiculo (placa, n_chasis, modelo, kilometraje, id_marca, id_color, id_tipo_vehiculo,
+    id_blindaje, id_transmision, id_cilindraje, id_seguro_vehiculo, id_estado_vehiculo, id_proveedor, id_sucursal)
+VALUES
+('ABCS123', 'CHS123456', 'Logan 2020', 25000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);

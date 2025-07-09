@@ -4,10 +4,7 @@ import Modelo.ConectarBD;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import java.util.Date;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import javax.swing.table.DefaultTableModel;
 public class Vehiculos {
 
     private String placa;
@@ -282,6 +279,43 @@ public class Vehiculos {
         return false;
     }
     }
+    public boolean verificarDisponibilidadFiltrada(String marca, String color, String tipo, String transmision,
+                                               String sucursal, String blindaje, String cilindraje) {
+    boolean disponible = false;
+    try {
+        ConectarBD conexion = new ConectarBD();
+
+        String sql = """
+            SELECT * FROM Vehiculo 
+            WHERE id_marca = (SELECT id_marca FROM marca_vehiculo WHERE nombre_marca = ?) 
+              AND id_color = (SELECT id_color FROM color_vehiculo WHERE nombre_color = ?) 
+              AND id_tipo_vehiculo = (SELECT id_tipo FROM tipo_vehiculo WHERE descripcion = ?) 
+              AND id_transmision = (SELECT id_transmision FROM transmision_vehiculo WHERE descripcion = ?) 
+              AND id_sucursal = (SELECT id_sucursal FROM sucursal WHERE nombre = ?) 
+              AND id_blindaje = (SELECT id_blindaje FROM blindaje_vehiculo WHERE descripcion = ?) 
+              AND id_cilindraje = (SELECT id_cilindraje FROM cilindraje_vehiculo WHERE descripcion = ?) 
+              AND id_estado_vehiculo = (SELECT id_estado FROM estado_vehiculo WHERE descripcion = 'Disponible')
+        """;
+
+        PreparedStatement ps = conexion.getConexion().prepareStatement(sql);
+        ps.setString(1, marca);
+        ps.setString(2, color);
+        ps.setString(3, tipo);
+        ps.setString(4, transmision);
+        ps.setString(5, sucursal);
+        ps.setString(6, blindaje);
+        ps.setString(7, cilindraje);
+
+        ResultSet rs = ps.executeQuery();
+        disponible = rs.next(); // Si hay resultados, hay al menos un vehículo disponible
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error al consultar disponibilidad: " + e.getMessage());
+    }
+
+    return disponible;
+}
+
     
     
 }
