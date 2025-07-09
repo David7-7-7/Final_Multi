@@ -67,4 +67,5 @@ public class EstadoVehiculo {
             JOptionPane.showMessageDialog(null, "Error al cargar estados: " + e.getMessage());
         }
     }
+    
 }

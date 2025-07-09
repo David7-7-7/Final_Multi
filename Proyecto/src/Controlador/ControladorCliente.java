@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import modelo.Vehiculos;
 
 public class ControladorCliente implements ActionListener {
 
@@ -23,10 +24,11 @@ public class ControladorCliente implements ActionListener {
     FormularioCliente_1 objetoCliente;
     FormularioGerente objetoVGerente;
 
-    // Datos
+    // Datos auxiliares
     String[] datos = new String[10];
     DefaultTableModel modelo;
 
+    // Constructor
     public ControladorCliente() {
         objetoIngresar = new Ingresar();
         objetoModelo = new Cliente();
@@ -41,6 +43,7 @@ public class ControladorCliente implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         if (e.getSource() == objetoVIngresar.getBotonIngresar()) {
             String tipo = objetoVIngresar.getTipoUser().getSelectedItem().toString();
             String correo = objetoVIngresar.getTxtCorreo().getText();
@@ -78,10 +81,7 @@ public class ControladorCliente implements ActionListener {
         }
 
         if (objetoVGerente != null && e.getSource() == objetoVGerente.getBotonAgregarG()) {
-            agregarMarcaNueva();
-        }
-
-        if (objetoVGerente != null && e.getSource() == objetoVGerente.getBotonAgregarVehiculo()) {
+           // agregarMarcaNueva();
             agregarVehiculoNuevo();
         }
     }
@@ -89,7 +89,17 @@ public class ControladorCliente implements ActionListener {
     private void mostrarFormularioClientee() {
         objetoCliente = new FormularioCliente_1();
         objetoCliente.setVisible(true);
+
+        // Cargar datos en los ComboBox del formulario
         MarcaVehiculo.cargarMarcasEnCombo(objetoCliente.getMarca());
+        ColorVehiculo.cargarEnCombo(objetoCliente.getColor());
+        BlindajeVehiculo.cargarEnCombo(objetoCliente.getBlindaje());
+        CilindrajeVehiculo.cargarEnCombo(objetoCliente.getCilindraje());
+        Sucursal.cargarEnCombo(objetoCliente.getSucursal());
+        TipoVehiculo.cargarEnCombo(objetoCliente.getTipo());
+        TransmisionVehiculo.cargarEnCombo(objetoCliente.getTransmision());
+
+        // Escuchadores
         objetoCliente.getBtnModificar().addActionListener(this);
         objetoCliente.getBtnEliminar().addActionListener(this);
         objetoCliente.getBotonAveriguar().addActionListener(this);   
@@ -105,7 +115,6 @@ public class ControladorCliente implements ActionListener {
         objetoVGerente = new FormularioGerente();
         objetoVGerente.setVisible(true);
         objetoVGerente.getBotonAgregarG().addActionListener(this);
-        objetoVGerente.getBotonAgregarVehiculo().addActionListener(this);
     }
 
     private void insertarCliente() {
@@ -170,24 +179,48 @@ public class ControladorCliente implements ActionListener {
     try {
         String placa = objetoVGerente.getTxtPlaca1().getText().trim();
         String modelo = objetoVGerente.getTxtModelo1().getText().trim();
+        String nChasis = objetoVGerente.getTxtNChasis().getText().trim();
         int kilometraje = Integer.parseInt(objetoVGerente.getTxtKm().getText().trim());
 
-        int idMarca = new MarcaVehiculo(objetoVGerente.getTxtMarca1().getText()).getId();
-        int idColor = new ColorVehiculo(objetoVGerente.getColor().getSelectedItem().toString()).getId();
+        // --- Marca ---
+        String nombreMarca = objetoVGerente.getTxtMarca1().getText().trim();
+        MarcaVehiculo marca = new MarcaVehiculo(nombreMarca);
+        int idMarca = marca.getId();
+
+        if (idMarca == -1) {
+            if (marca.insertar()) {
+                idMarca = marca.getId();
+                JOptionPane.showMessageDialog(null, "Marca '" + nombreMarca + "' agregada automáticamente.");
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo registrar la nueva marca.");
+                return;
+            }
+        }
+
+        // --- Resto de datos relacionados ---
+        int idColor = new ColorVehiculoo(objetoVGerente.getColor().getSelectedItem().toString()).getId();
+
+if (idColor == -1) {
+    JOptionPane.showMessageDialog(null, "El color seleccionado no existe en la base de datos.");
+    return; // Cancela el proceso
+}
         int idBlindaje = new BlindajeVehiculo(objetoVGerente.getBlindaje().getSelectedItem().toString()).getId();
         int idCilindraje = new CilindrajeVehiculo(objetoVGerente.getCilindraje().getSelectedItem().toString()).getId();
-        int idEstado = new EstadoVehiculo(objetoVGerente.getComboEstado().getSelectedItem().toString()).getId();
-        int idProveedor = new ProveedorVehiculo(objetoVGerente.getComboProveedor().getSelectedItem().toString()).getId();
-        int idSeguro = new SeguroVehiculo(objetoVGerente.getComboSeguro().getSelectedItem().toString()).getId();
-        int idSucursal = new Sucursal(objetoVGerente.getComboSucursal().getSelectedItem().toString()).getId();
-        int idTipoVehiculo = new TipoVehiculo(objetoVGerente.getComboTipoVehiculo().getSelectedItem().toString()).getId();
-        int idTransmision = new TransmisionVehiculo(objetoVGerente.getComboTransmision().getSelectedItem().toString()).getId();
+        int idEstado = new EstadoVehiculo(objetoVGerente.getDisponibilidad().getSelectedItem().toString()).getId();
+        int idProveedor = new ProveedorVehiculo(objetoVGerente.getProveedores().getSelectedItem().toString()).getId();
+        int idSeguro = new SeguroVehiculo(objetoVGerente.getSeguro().getSelectedItem().toString()).getId();
+        int idSucursal = new Sucursal(objetoVGerente.getSucursal().getSelectedItem().toString()).getId();
+        int idTipoVehiculo = new TipoVehiculo(objetoVGerente.getTipo().getSelectedItem().toString()).getId();
+        int idTransmision = new TransmisionVehiculo(objetoVGerente.getTransmision().getSelectedItem().toString()).getId();
 
-        Vehiculo nuevoVehiculo = new Vehiculo(placa, modelo, kilometraje, idMarca, idColor, idBlindaje,
-                                              idCilindraje, idEstado, idProveedor, idSeguro,
-                                              idSucursal, idTipoVehiculo, idTransmision);
+        // --- Crear e insertar vehículo ---
+        Vehiculos nuevoVehiculo = new Vehiculos(
+            placa, nChasis, modelo, kilometraje, idMarca, idColor,
+            idTipoVehiculo, idBlindaje, idTransmision, idCilindraje,
+            idSeguro, idEstado, idProveedor, idSucursal
+        );
 
-        if (nuevoVehiculo.insertar()) {
+        if (nuevoVehiculo.insertarVehiculo()) {
             JOptionPane.showMessageDialog(null, "Vehículo registrado correctamente.");
         } else {
             JOptionPane.showMessageDialog(null, "Error al registrar el vehículo.");

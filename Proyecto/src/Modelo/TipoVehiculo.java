@@ -1,15 +1,25 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package Modelo;
 
+/**
+ * Clase que representa un tipo de vehículo.
+ * Permite insertar y consultar tipos de vehículo registrados en la base de datos.
+ */
 import java.sql.*;
 import javax.swing.*;
 
 public class TipoVehiculo {
+
     private int id;
     private String descripcion;
     private int capacidad;
     private String combustible;
     private double tarifaDia;
 
+    // Constructor completo para inserción
     public TipoVehiculo(String descripcion, int capacidad, String combustible, double tarifaDia) {
         this.descripcion = descripcion;
         this.capacidad = capacidad;
@@ -18,11 +28,31 @@ public class TipoVehiculo {
         this.id = obtenerIdPorDescripcion(descripcion);
     }
 
-    public int getId() { return id; }
-    public String getDescripcion() { return descripcion; }
-    public int getCapacidad() { return capacidad; }
-    public String getCombustible() { return combustible; }
-    public double getTarifaDia() { return tarifaDia; }
+    // Constructor simplificado para obtener ID por descripción
+    public TipoVehiculo(String descripcion) {
+        this.descripcion = descripcion;
+        this.id = obtenerIdPorDescripcion(descripcion);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public int getCapacidad() {
+        return capacidad;
+    }
+
+    public String getCombustible() {
+        return combustible;
+    }
+
+    public double getTarifaDia() {
+        return tarifaDia;
+    }
 
     public static int obtenerIdPorDescripcion(String descripcion) {
         try {
@@ -31,7 +61,9 @@ public class TipoVehiculo {
             PreparedStatement ps = conectar.getConexion().prepareStatement(sql);
             ps.setString(1, descripcion);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt("id_tipo");
+            if (rs.next()) {
+                return rs.getInt("id_tipo");
+            }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error al obtener ID del tipo: " + e.getMessage());
         }
@@ -51,7 +83,9 @@ public class TipoVehiculo {
             int filas = ps.executeUpdate();
             if (filas > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) this.id = rs.getInt(1);
+                if (rs.next()) {
+                    this.id = rs.getInt(1);
+                }
                 return true;
             }
         } catch (SQLException e) {
@@ -67,10 +101,11 @@ public class TipoVehiculo {
             String sql = "SELECT descripcion FROM Tipo_vehiculo ORDER BY descripcion";
             PreparedStatement ps = conectar.getConexion().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) combo.addItem(rs.getString("descripcion"));
+            while (rs.next()) {
+                combo.addItem(rs.getString("descripcion"));
+            }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error al cargar tipos de vehículo: " + e.getMessage());
         }
     }
 }
-

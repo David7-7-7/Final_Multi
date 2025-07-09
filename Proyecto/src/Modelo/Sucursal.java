@@ -19,7 +19,12 @@ public class Sucursal {
         this.idCodigoPostal = idCodigoPostal;
         this.id = obtenerIdPorNombre(nombre);
     }
-
+    
+    public Sucursal(String nombre) {
+    this.nombre = nombre;
+    this.id = obtenerIdPorNombre(nombre);
+    }
+        
     public int getId() { return id; }
     public String getNombre() { return nombre; }
     public String getDireccion() { return direccion; }

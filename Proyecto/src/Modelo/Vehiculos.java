@@ -141,24 +141,24 @@ public class Vehiculos {
     }
 
     // --- Constructor completo ---
-    public Vehiculos(String placa, String nChasis, String modelo, int kilometraje, int idMarca, int idColor,
-                    int idTipoVehiculo, int idBlindaje, int idTransmision, int idCilindraje,
-                    int idSeguroVehiculo, int idEstadoVehiculo, int idProveedor, int idSucursal) {
-        this.placa = placa;
-        this.nChasis = nChasis;
-        this.modelo = modelo;
-        this.kilometraje = kilometraje;
-        this.idMarca = idMarca;
-        this.idColor = idColor;
-        this.idTipoVehiculo = idTipoVehiculo;
-        this.idBlindaje = idBlindaje;
-        this.idTransmision = idTransmision;
-        this.idCilindraje = idCilindraje;
-        this.idSeguroVehiculo = idSeguroVehiculo;
-        this.idEstadoVehiculo = idEstadoVehiculo;
-        this.idProveedor = idProveedor;
-        this.idSucursal = idSucursal;
-    }
+    public Vehiculos(String placa, String modelo,String nChasis, int kilometraje, int idMarca, int idColor,
+                 int idBlindaje, int idCilindraje, int idEstadoVehiculo, int idProveedor,
+                 int idSeguroVehiculo, int idSucursal, int idTipoVehiculo, int idTransmision) {
+    this.placa = placa;
+    this.modelo = modelo;
+    this.kilometraje = kilometraje;
+    this.idMarca = idMarca;
+    this.idColor = idColor;
+    this.idBlindaje = idBlindaje;
+    this.idCilindraje = idCilindraje;
+    this.idEstadoVehiculo = idEstadoVehiculo;
+    this.idProveedor = idProveedor;
+    this.idSeguroVehiculo = idSeguroVehiculo;
+    this.idSucursal = idSucursal;
+    this.idTipoVehiculo = idTipoVehiculo;
+    this.idTransmision = idTransmision;
+    this.nChasis = nChasis; // opcional: vacío
+}
 
     // ========== MÉTODOS DE BASE DE DATOS ==========
 

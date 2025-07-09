@@ -352,4 +352,4 @@ CREATE TABLE Usuario (
 );
 	
     
-SELECT * FROM Empleado WHERE correo = 'carlos.perez@email.com' AND contrasena = 'clave123';
+SELECT * FROM vehiculo ;

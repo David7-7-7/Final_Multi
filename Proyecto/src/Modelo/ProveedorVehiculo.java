@@ -19,6 +19,10 @@ public class ProveedorVehiculo {
         this.idCuenta = idCuenta;
         this.id = obtenerIdPorNombre(nombre);
     }
+    public ProveedorVehiculo(String nombre) {
+    this.nombre = nombre;
+    this.id = obtenerIdPorNombre(nombre);
+}
 
     public int getId() { return id; }
     public String getNombre() { return nombre; }
