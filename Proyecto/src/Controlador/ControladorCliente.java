@@ -4,6 +4,7 @@ import Modelo.Cliente;
 import Modelo.CodigoPostal;
 import Modelo.Ingresar;
 import Modelo.Licencia;
+import Modelo.MarcaVehiculo;
 import Vista.FormularioCliente;
 import Vista.FormularioCliente_1;
 import Vista.FormularioCodigoPostal;
@@ -13,17 +14,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import modelo.Vehiculos;
 
 public class ControladorCliente implements ActionListener {
 
     // Modelos
     Ingresar objetoIngresar;
-    Cliente objetoModelo ;
-    Licencia objetoLicencia ;
-    CodigoPostal objetoCP ;
+    Cliente objetoModelo;
+    Licencia objetoLicencia;
+    CodigoPostal objetoCP;
+    Vehiculos objetoVehiculo;
 
     // Formularios
-    FormularioIngresar objetoVIngresar ;
+    FormularioIngresar objetoVIngresar;
     FormularioCliente objetoVista;
     FormularioCliente_1 objetoCliente;
 
@@ -31,24 +34,20 @@ public class ControladorCliente implements ActionListener {
     String[] datos = new String[10];
     DefaultTableModel modelo;
 
-    public ControladorCliente() {   
-        // Modelos
+    public ControladorCliente() {
         objetoIngresar = new Ingresar();
         objetoModelo = new Cliente();
         objetoLicencia = new Licencia();
         objetoCP = new CodigoPostal();
-        
-        // Formularios
+        objetoVehiculo = new Vehiculos(); // se agrega modelo de vehículo
+
         objetoVIngresar = new FormularioIngresar();
-        
-        
         objetoVIngresar.setVisible(true);
         objetoVIngresar.getBotonIngresar().addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Evento de login
         if (e.getSource() == objetoVIngresar.getBotonIngresar()) {
             String tipo = objetoVIngresar.getTipoUser().getSelectedItem().toString();
             String correo = objetoVIngresar.getTxtCorreo().getText();
@@ -58,14 +57,12 @@ public class ControladorCliente implements ActionListener {
                 if (objetoIngresar.validarCliente(correo, contrasena)) {
                     JOptionPane.showMessageDialog(null, "¡Bienvenido Cliente!");
                     String idCliente = objetoModelo.obtenerIDporCorreoYContraseña(correo, contrasena);
-                    //System.out.println("ID del cliente logueado: " + idCliente);
                     mostrarFormularioClientee();
                     objetoCliente.getTxtIdCliente().setText(idCliente);
                 } else {
                     int respuesta = JOptionPane.showConfirmDialog(null,
                             "Cliente no registrado. ¿Desea registrarse ahora?",
-                            "Registro requerido",
-                            JOptionPane.OK_CANCEL_OPTION,
+                            "Registro requerido", JOptionPane.OK_CANCEL_OPTION,
                             JOptionPane.INFORMATION_MESSAGE);
                     if (respuesta == JOptionPane.OK_OPTION) {
                         mostrarFormularioCliente();
@@ -74,18 +71,19 @@ public class ControladorCliente implements ActionListener {
             }
         }
 
-        /// Botones del formulario de cliente
         if (objetoVista != null) {
             if (e.getSource() == objetoVista.getBtnInsertar()) {
                 insertarCliente();
-            } /*else if (e.getSource() == objetoCliente.getBtnConsulta()) {
-                consultarClientes();
-            }*/ else if (e.getSource() == objetoCliente.getBtnModificar()) {
+            }
+        }
+
+        if (objetoCliente != null) {
+            if (e.getSource() == objetoCliente.getBtnModificar()) {
                 modificarCliente();
-            }/* else if (e.getSource() == objetoCliente.getBtnBuscar()) {
-                buscarCliente();
-            }*/ else if (e.getSource() == objetoCliente.getBtnEliminar()) {
+            } else if (e.getSource() == objetoCliente.getBtnEliminar()) {
                 eliminarCliente();
+            } else if (e.getSource() == objetoCliente.getBotonAveriguar()) {
+                verificarDisponibilidadVehiculo();
             }
         }
     }
@@ -93,23 +91,15 @@ public class ControladorCliente implements ActionListener {
     private void mostrarFormularioClientee() {
         objetoCliente = new FormularioCliente_1();
         objetoCliente.setVisible(true);
-
-        //objetoCliente.getBtnInsertar().addActionListener(this);
-        //objetoCliente.getBtnConsulta().addActionListener(this);
         objetoCliente.getBtnModificar().addActionListener(this);
-        //objetoCliente.getBtnBuscar().addActionListener(this);
         objetoCliente.getBtnEliminar().addActionListener(this);
+        objetoCliente.getBotonAveriguar().addActionListener(this);
     }
-    
+
     private void mostrarFormularioCliente() {
         objetoVista = new FormularioCliente();
         objetoVista.setVisible(true);
-
         objetoVista.getBtnInsertar().addActionListener(this);
-        //objetoVista.getBtnConsulta().addActionListener(this);
-        objetoCliente.getBtnModificar().addActionListener(this);
-        //objetoVista.getBtnBuscar().addActionListener(this);
-        objetoCliente.getBtnEliminar().addActionListener(this);
     }
 
     private void insertarCliente() {
@@ -147,13 +137,6 @@ public class ControladorCliente implements ActionListener {
         limpiarFormularioRegistro();
     }
 
-   /* private void consultarClientes() {
-        modelo = (DefaultTableModel) objetoVista.getTabla().getModel();
-        modelo.setRowCount(0); // Limpiar tabla
-        modelo = objetoModelo.consultar();
-        objetoVista.getTabla().setModel(modelo);
-    }*/
-
     private void modificarCliente() {
         String ID_Cliente = objetoCliente.getTxtIdCliente().getText();
         objetoModelo.setDocumento(objetoCliente.getTxtDocumento1().getText());
@@ -166,25 +149,9 @@ public class ControladorCliente implements ActionListener {
         objetoModelo.setIdTipoDocumento(objetoCliente.getTipoD1().getSelectedItem().toString());
         objetoModelo.setIdTipoCliente(objetoCliente.getTipoC1().getSelectedItem().toString());
         objetoModelo.setIdCodigoPostal(objetoCliente.getTxtCodigoP1().getText());
-        
+
         objetoCliente.getTxtIdCliente().setText(ID_Cliente);
         objetoModelo.modificar(ID_Cliente);
-    }
-
-    private void buscarCliente() {
-        String id_Cliente = objetoCliente.getTxtIdCliente().getText();
-        datos = objetoModelo.buscar(id_Cliente, datos);
-
-        objetoCliente.getTxtDocumento1().setText(datos[0]);
-        objetoCliente.getTxtNombre1().setText(datos[1]);
-        objetoCliente.getTxtTelefono1().setText(datos[2]);
-        objetoCliente.getTxtDireccion1().setText(datos[3]);
-        objetoCliente.getTxtCorreo1().setText(datos[4]);
-        objetoCliente.getTxtInfracciones1().setText(datos[5]);
-        objetoCliente.getTxtlicencia1().setText(datos[6]);
-        objetoCliente.getTipoD1().setSelectedItem(datos[7]);
-        objetoCliente.getTipoC1().setSelectedItem(datos[8]);
-        objetoCliente.getTxtCodigoP1().setText(datos[9]);
     }
 
     private void eliminarCliente() {
@@ -192,6 +159,35 @@ public class ControladorCliente implements ActionListener {
         objetoModelo.eliminar(ID_Cliente);
         limpiarFormularioModificar();
     }
+
+    private void verificarDisponibilidadVehiculo() {
+        try {
+            // Obtener el nombre seleccionado del combo (es un String)
+            String nombreMarca = (String) objetoCliente.getMarca().getSelectedItem();
+
+            // Usar el método de clase para obtener el ID desde el nombre
+            MarcaVehiculo marcaTemp = new MarcaVehiculo(nombreMarca);
+            int idMarca = marcaTemp.getId();
+
+            System.out.println("ID Marca seleccionada: " + idMarca);
+            JOptionPane.showMessageDialog(null, "ID Marca: " + idMarca);
+
+            // Consultar disponibilidad
+            Vehiculos vehiculo = new Vehiculos();
+            boolean disponible = vehiculo.consultarVehiculoConFiltros(idMarca);
+
+            if (disponible) {
+                objetoCliente.getTxtDisponibilidad().setText("Disponible");
+            } else {
+                objetoCliente.getTxtDisponibilidad().setText("No disponible");
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error al verificar disponibilidad: " + ex.getMessage());
+        }
+    }
+
+
 
     private void mostrarFormularioLicencia() {
         FormularioLicencia formLicencia = new FormularioLicencia();
@@ -251,4 +247,5 @@ public class ControladorCliente implements ActionListener {
         objetoCliente.getTipoC1().setSelectedIndex(0);
         objetoCliente.getTxtCodigoP1().setText("");
     }
+    
 }

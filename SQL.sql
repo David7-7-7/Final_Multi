@@ -1,6 +1,7 @@
 -- ------------------------------------------------------------------
 -- 1) TABLAS AUXILIARES / CATÁLOGOS HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 -- ------------------------------------------------------------------
+drop database alquiler_vehiculo;
 
 CREATE DATABASE IF NOT EXISTS Alquiler_vehiculo;
 USE Alquiler_vehiculo;

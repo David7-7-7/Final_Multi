@@ -36,6 +36,8 @@ public class FormularioCliente extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -62,6 +64,8 @@ public class FormularioCliente extends javax.swing.JFrame {
         txtlicencia = new javax.swing.JTextField();
         jLabel25 = new javax.swing.JLabel();
         txtContraseña = new javax.swing.JPasswordField();
+
+        jScrollPane1.setViewportView(jEditorPane1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -412,6 +416,7 @@ public class FormularioCliente extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> TipoC;
     private javax.swing.JComboBox<String> TipoD;
     private javax.swing.JButton btnInsertar;
+    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -425,6 +430,7 @@ public class FormularioCliente extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField txtCodigoP;
     private javax.swing.JPasswordField txtContraseña;

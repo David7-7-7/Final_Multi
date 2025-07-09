@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 
-/// TE AMO MAMA DE SEBAS
+
 public class Licencia {
     private int puebra2;
     private int idLicencia;
