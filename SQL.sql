@@ -7,55 +7,55 @@ CREATE DATABASE IF NOT EXISTS Alquiler_vehiculo;
 USE Alquiler_vehiculo;
 CREATE TABLE Tipo_entidad (
   id_tipo_entidad   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL
+  descripcion       VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Medio_pago (
   id_medio_pago     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL
+  descripcion       VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 
 
 CREATE TABLE Codigo_postal (
-  id_codigo_postal  VARCHAR(50) NOT NULL PRIMARY KEY,
-  pais              VARCHAR(50) NOT NULL,
-  departamento      VARCHAR(50) NOT NULL,
-  ciudad            VARCHAR(50) NOT NULL
+  id_codigo_postal  VARCHAR(50)  PRIMARY KEY,
+  pais              VARCHAR(50) ,
+  departamento      VARCHAR(50) ,
+  ciudad            VARCHAR(50) 
 ) ENGINE=InnoDB;
 
 
 
 CREATE TABLE Tipo_mantenimiento (
   id_tipo           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL
+  descripcion       VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Taller_mantenimiento (
   id_taller         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre            VARCHAR(100) NOT NULL,
+  nombre            VARCHAR(100) ,
   direccion         VARCHAR(150),
   telefono          VARCHAR(20)
 ) ENGINE=InnoDB;
 
 CREATE TABLE Estado_vehiculo (
   id_estado         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL
+  descripcion       VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Marca_vehiculo (
   id_marca          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre_marca      VARCHAR(100) NOT NULL
+  nombre_marca      VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Color_vehiculo (
   id_color          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre_color      VARCHAR(50) NOT NULL
+  nombre_color      VARCHAR(50) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Tipo_vehiculo (
   id_tipo           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL,
+  descripcion       VARCHAR(100) ,
   capacidad         INT,
   combustible       VARCHAR(50),
   tarifa_dia        DECIMAL(10,2)
@@ -63,22 +63,22 @@ CREATE TABLE Tipo_vehiculo (
 
 CREATE TABLE Blindaje_vehiculo (
   id_blindaje       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL
+  descripcion       VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Transmision_vehiculo (
   id_transmision    INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(50) NOT NULL
+  descripcion       VARCHAR(50) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Cilindraje_vehiculo (
   id_cilindraje     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(50) NOT NULL
+  descripcion       VARCHAR(50) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE Estado_alquiler (
   id_estado         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  descripcion       VARCHAR(100) NOT NULL
+  descripcion       VARCHAR(100) 
 ) ENGINE=InnoDB;
 
 
@@ -88,19 +88,19 @@ CREATE TABLE Estado_alquiler (
 
 CREATE TABLE Sucursal (
   id_sucursal       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre            VARCHAR(100) NOT NULL,
+  nombre            VARCHAR(100) ,
   direccion         VARCHAR(150),
   telefono          VARCHAR(20),
   gerente           VARCHAR(100),
   id_codigo_postal  VARCHAR(50),
   FOREIGN KEY (id_codigo_postal)
     REFERENCES Codigo_postal(id_codigo_postal)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB; 
 
 CREATE TABLE Empleado (
   id_empleado       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  documento         VARCHAR(20) NOT NULL,
-  nombre            VARCHAR(100) NOT NULL,
+  documento         VARCHAR(20) ,
+  nombre            VARCHAR(100) ,
   salario           DECIMAL(10,2),
   cargo             VARCHAR(100),
   telefono          VARCHAR(20),
@@ -108,6 +108,8 @@ CREATE TABLE Empleado (
   correo            VARCHAR(100),
   tipo_documento VARCHAR(100)
 ) ENGINE=InnoDB;
+ALTER TABLE Empleado
+ADD COLUMN contrasena VARCHAR(100);
 
 CREATE TABLE Licencia_conduccion (
  id_licencia INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -338,7 +340,8 @@ CREATE TABLE Abono_reserva (
 
 select * from licencia_conduccion;
 ALTER TABLE Cliente ADD COLUMN contrasena VARCHAR(100);
-ALTER TABLE Empleado ADD COLUMN contrasena VARCHAR(100);
+DROP TABLE Empleado;
+
 CREATE TABLE Usuario (
   id_usuario        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   correo            VARCHAR(100) NOT NULL UNIQUE,
@@ -348,3 +351,5 @@ CREATE TABLE Usuario (
   FOREIGN KEY (id_referencia) REFERENCES Cliente(id_cliente) -- o Empleado según el rol
 );
 	
+    
+SELECT * FROM Empleado WHERE correo = 'carlos.perez@email.com' AND contrasena = 'clave123';

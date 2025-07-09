@@ -1,20 +1,11 @@
 package Controlador;
 
-import Modelo.Cliente;
-import Modelo.CodigoPostal;
-import Modelo.Ingresar;
-import Modelo.Licencia;
-import Modelo.MarcaVehiculo;
-import Vista.FormularioCliente;
-import Vista.FormularioCliente_1;
-import Vista.FormularioCodigoPostal;
-import Vista.FormularioIngresar;
-import Vista.FormularioLicencia;
+import Modelo.*;
+import Vista.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import modelo.Vehiculos;
 
 public class ControladorCliente implements ActionListener {
 
@@ -24,11 +15,13 @@ public class ControladorCliente implements ActionListener {
     Licencia objetoLicencia;
     CodigoPostal objetoCP;
     Vehiculos objetoVehiculo;
+    Empleado objetoEmpleado;
 
     // Formularios
     FormularioIngresar objetoVIngresar;
     FormularioCliente objetoVista;
     FormularioCliente_1 objetoCliente;
+    FormularioGerente objetoVGerente;
 
     // Datos
     String[] datos = new String[10];
@@ -39,7 +32,7 @@ public class ControladorCliente implements ActionListener {
         objetoModelo = new Cliente();
         objetoLicencia = new Licencia();
         objetoCP = new CodigoPostal();
-        objetoVehiculo = new Vehiculos(); // se agrega modelo de vehículo
+        objetoVehiculo = new Vehiculos();
 
         objetoVIngresar = new FormularioIngresar();
         objetoVIngresar.setVisible(true);
@@ -68,38 +61,51 @@ public class ControladorCliente implements ActionListener {
                         mostrarFormularioCliente();
                     }
                 }
+            } else if (tipo.equals("Empleado")) {
+                if (objetoIngresar.validarEmpleado(correo, contrasena)) {
+                    objetoEmpleado = new Empleado();
+                    String idEmpleado = objetoEmpleado.obtenerIDporCorreoYContraseña(correo, contrasena);
+                    JOptionPane.showMessageDialog(null, "¡Bienvenido Empleado!");
+                    mostrarFormularioEmpleado();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Credenciales incorrectas para empleado.");
+                }
             }
         }
 
-        if (objetoVista != null) {
-            if (e.getSource() == objetoVista.getBtnInsertar()) {
-                insertarCliente();
-            }
+        if (objetoVista != null && e.getSource() == objetoVista.getBtnInsertar()) {
+            insertarCliente();
         }
 
-        if (objetoCliente != null) {
-            if (e.getSource() == objetoCliente.getBtnModificar()) {
-                modificarCliente();
-            } else if (e.getSource() == objetoCliente.getBtnEliminar()) {
-                eliminarCliente();
-            } else if (e.getSource() == objetoCliente.getBotonAveriguar()) {
-                verificarDisponibilidadVehiculo();
-            }
+        if (objetoVGerente != null && e.getSource() == objetoVGerente.getBotonAgregarG()) {
+            agregarMarcaNueva();
+        }
+
+        if (objetoVGerente != null && e.getSource() == objetoVGerente.getBotonAgregarVehiculo()) {
+            agregarVehiculoNuevo();
         }
     }
 
     private void mostrarFormularioClientee() {
         objetoCliente = new FormularioCliente_1();
         objetoCliente.setVisible(true);
+        MarcaVehiculo.cargarMarcasEnCombo(objetoCliente.getMarca());
         objetoCliente.getBtnModificar().addActionListener(this);
         objetoCliente.getBtnEliminar().addActionListener(this);
-        objetoCliente.getBotonAveriguar().addActionListener(this);
+        objetoCliente.getBotonAveriguar().addActionListener(this);   
     }
 
     private void mostrarFormularioCliente() {
         objetoVista = new FormularioCliente();
         objetoVista.setVisible(true);
         objetoVista.getBtnInsertar().addActionListener(this);
+    }
+
+    private void mostrarFormularioEmpleado() {
+        objetoVGerente = new FormularioGerente();
+        objetoVGerente.setVisible(true);
+        objetoVGerente.getBotonAgregarG().addActionListener(this);
+        objetoVGerente.getBotonAgregarVehiculo().addActionListener(this);
     }
 
     private void insertarCliente() {
@@ -137,56 +143,62 @@ public class ControladorCliente implements ActionListener {
         limpiarFormularioRegistro();
     }
 
-    private void modificarCliente() {
-        String ID_Cliente = objetoCliente.getTxtIdCliente().getText();
-        objetoModelo.setDocumento(objetoCliente.getTxtDocumento1().getText());
-        objetoModelo.setNombre(objetoCliente.getTxtNombre1().getText());
-        objetoModelo.setTelefono(objetoCliente.getTxtTelefono1().getText());
-        objetoModelo.setDireccion(objetoCliente.getTxtDireccion1().getText());
-        objetoModelo.setCorreo(objetoCliente.getTxtCorreo1().getText());
-        objetoModelo.setInfracciones(objetoCliente.getTxtInfracciones1().getText());
-        objetoModelo.setIdLicencia(objetoCliente.getTxtlicencia1().getText());
-        objetoModelo.setIdTipoDocumento(objetoCliente.getTipoD1().getSelectedItem().toString());
-        objetoModelo.setIdTipoCliente(objetoCliente.getTipoC1().getSelectedItem().toString());
-        objetoModelo.setIdCodigoPostal(objetoCliente.getTxtCodigoP1().getText());
+    private void agregarMarcaNueva() {
+        if (objetoVGerente != null) {
+            String nombreMarca = objetoVGerente.getTxtMarca1().getText().trim();
 
-        objetoCliente.getTxtIdCliente().setText(ID_Cliente);
-        objetoModelo.modificar(ID_Cliente);
-    }
+            if (!nombreMarca.isEmpty()) {
+                MarcaVehiculo nueva = new MarcaVehiculo(nombreMarca);
 
-    private void eliminarCliente() {
-        String ID_Cliente = objetoCliente.getTxtIdCliente().getText();
-        objetoModelo.eliminar(ID_Cliente);
-        limpiarFormularioModificar();
-    }
-
-    private void verificarDisponibilidadVehiculo() {
-        try {
-            // Obtener el nombre seleccionado del combo (es un String)
-            String nombreMarca = (String) objetoCliente.getMarca().getSelectedItem();
-
-            // Usar el método de clase para obtener el ID desde el nombre
-            MarcaVehiculo marcaTemp = new MarcaVehiculo(nombreMarca);
-            int idMarca = marcaTemp.getId();
-
-            System.out.println("ID Marca seleccionada: " + idMarca);
-            JOptionPane.showMessageDialog(null, "ID Marca: " + idMarca);
-
-            // Consultar disponibilidad
-            Vehiculos vehiculo = new Vehiculos();
-            boolean disponible = vehiculo.consultarVehiculoConFiltros(idMarca);
-
-            if (disponible) {
-                objetoCliente.getTxtDisponibilidad().setText("Disponible");
+                if (nueva.getId() == -1) {
+                    if (nueva.insertar()) {
+                        JOptionPane.showMessageDialog(null, "Marca agregada exitosamente.");
+                        objetoVGerente.getTxtMarca1().setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Error al insertar la marca.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "La marca ya existe en el sistema.");
+                }
             } else {
-                objetoCliente.getTxtDisponibilidad().setText("No disponible");
+                JOptionPane.showMessageDialog(null, "Ingrese el nombre de la marca.");
             }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al verificar disponibilidad: " + ex.getMessage());
         }
     }
 
+   private void agregarVehiculoNuevo() {
+    try {
+        String placa = objetoVGerente.getTxtPlaca1().getText().trim();
+        String modelo = objetoVGerente.getTxtModelo1().getText().trim();
+        int kilometraje = Integer.parseInt(objetoVGerente.getTxtKm().getText().trim());
+
+        int idMarca = new MarcaVehiculo(objetoVGerente.getTxtMarca1().getText()).getId();
+        int idColor = new ColorVehiculo(objetoVGerente.getColor().getSelectedItem().toString()).getId();
+        int idBlindaje = new BlindajeVehiculo(objetoVGerente.getBlindaje().getSelectedItem().toString()).getId();
+        int idCilindraje = new CilindrajeVehiculo(objetoVGerente.getCilindraje().getSelectedItem().toString()).getId();
+        int idEstado = new EstadoVehiculo(objetoVGerente.getComboEstado().getSelectedItem().toString()).getId();
+        int idProveedor = new ProveedorVehiculo(objetoVGerente.getComboProveedor().getSelectedItem().toString()).getId();
+        int idSeguro = new SeguroVehiculo(objetoVGerente.getComboSeguro().getSelectedItem().toString()).getId();
+        int idSucursal = new Sucursal(objetoVGerente.getComboSucursal().getSelectedItem().toString()).getId();
+        int idTipoVehiculo = new TipoVehiculo(objetoVGerente.getComboTipoVehiculo().getSelectedItem().toString()).getId();
+        int idTransmision = new TransmisionVehiculo(objetoVGerente.getComboTransmision().getSelectedItem().toString()).getId();
+
+        Vehiculo nuevoVehiculo = new Vehiculo(placa, modelo, kilometraje, idMarca, idColor, idBlindaje,
+                                              idCilindraje, idEstado, idProveedor, idSeguro,
+                                              idSucursal, idTipoVehiculo, idTransmision);
+
+        if (nuevoVehiculo.insertar()) {
+            JOptionPane.showMessageDialog(null, "Vehículo registrado correctamente.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al registrar el vehículo.");
+        }
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(null, "Kilometraje debe ser un número válido.");
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(null, "Error al registrar vehículo: " + ex.getMessage());
+    }
+}
 
 
     private void mostrarFormularioLicencia() {
@@ -234,18 +246,4 @@ public class ControladorCliente implements ActionListener {
         objetoVista.getTxtCodigoP().setText("");
         objetoVista.getTxtContraseña().setText("");
     }
-
-    private void limpiarFormularioModificar() {
-        objetoCliente.getTxtDocumento1().setText("");
-        objetoCliente.getTxtNombre1().setText("");
-        objetoCliente.getTxtTelefono1().setText("");
-        objetoCliente.getTxtDireccion1().setText("");
-        objetoCliente.getTxtCorreo1().setText("");
-        objetoCliente.getTxtInfracciones1().setText("");
-        objetoCliente.getTxtlicencia1().setText("");
-        objetoCliente.getTipoD1().setSelectedIndex(0);
-        objetoCliente.getTipoC1().setSelectedIndex(0);
-        objetoCliente.getTxtCodigoP1().setText("");
-    }
-    
 }
