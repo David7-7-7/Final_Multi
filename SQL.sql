@@ -340,7 +340,7 @@ CREATE TABLE Abono_reserva (
 
 select * from licencia_conduccion;
 ALTER TABLE Cliente ADD COLUMN contrasena VARCHAR(100);
-DROP TABLE Empleado;
+
 
 CREATE TABLE Usuario (
   id_usuario        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -352,4 +352,4 @@ CREATE TABLE Usuario (
 );
 	
     
-SELECT * FROM vehiculo ;
+SELECT * FROM Empleado ;

@@ -92,12 +92,13 @@ public class ControladorCliente implements ActionListener {
 
         // Cargar datos en los ComboBox del formulario
         MarcaVehiculo.cargarMarcasEnCombo(objetoCliente.getMarca());
-        ColorVehiculo.cargarEnCombo(objetoCliente.getColor());
+        ColorVehiculoo.cargarEnCombo(objetoCliente.getColor());
         BlindajeVehiculo.cargarEnCombo(objetoCliente.getBlindaje());
         CilindrajeVehiculo.cargarEnCombo(objetoCliente.getCilindraje());
         Sucursal.cargarEnCombo(objetoCliente.getSucursal());
         TipoVehiculo.cargarEnCombo(objetoCliente.getTipo());
         TransmisionVehiculo.cargarEnCombo(objetoCliente.getTransmision());
+        
 
         // Escuchadores
         objetoCliente.getBtnModificar().addActionListener(this);
@@ -115,6 +116,7 @@ public class ControladorCliente implements ActionListener {
         objetoVGerente = new FormularioGerente();
         objetoVGerente.setVisible(true);
         objetoVGerente.getBotonAgregarG().addActionListener(this);
+        EstadoVehiculo.cargarEnCombo(objetoVGerente.getDisponibilidad());
     }
 
     private void insertarCliente() {
@@ -200,13 +202,24 @@ public class ControladorCliente implements ActionListener {
         // --- Resto de datos relacionados ---
         int idColor = new ColorVehiculoo(objetoVGerente.getColor().getSelectedItem().toString()).getId();
 
-if (idColor == -1) {
-    JOptionPane.showMessageDialog(null, "El color seleccionado no existe en la base de datos.");
-    return; // Cancela el proceso
-}
+        if (idColor == -1) {
+            JOptionPane.showMessageDialog(null, "El color seleccionado no existe en la base de datos.");
+            return; // Cancela el proceso
+        }
         int idBlindaje = new BlindajeVehiculo(objetoVGerente.getBlindaje().getSelectedItem().toString()).getId();
         int idCilindraje = new CilindrajeVehiculo(objetoVGerente.getCilindraje().getSelectedItem().toString()).getId();
-        int idEstado = new EstadoVehiculo(objetoVGerente.getDisponibilidad().getSelectedItem().toString()).getId();
+        EstadoVehiculo estado = new EstadoVehiculo(objetoVGerente.getDisponibilidad().getSelectedItem().toString());
+        int idEstado = estado.getId();
+
+        if (idEstado == -1) {
+            if (estado.insertar()) {
+                idEstado = estado.getId();
+                JOptionPane.showMessageDialog(null, "Estado agregado automáticamente.");
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo registrar el nuevo estado.");
+                return;
+            }
+        }
         int idProveedor = new ProveedorVehiculo(objetoVGerente.getProveedores().getSelectedItem().toString()).getId();
         int idSeguro = new SeguroVehiculo(objetoVGerente.getSeguro().getSelectedItem().toString()).getId();
         int idSucursal = new Sucursal(objetoVGerente.getSucursal().getSelectedItem().toString()).getId();
