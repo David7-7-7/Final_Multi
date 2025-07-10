@@ -112,6 +112,32 @@ public class FormularioIngresar extends javax.swing.JFrame {
 
         REGISTRAR.addTab("INGRESAR", jPanel1);
 
+        // --- Start of manually added code for jPanel2 and btnRegistrar ---
+        jPanel2 = new javax.swing.JPanel();
+        btnRegistrar = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(120, 120, 120)
+                .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(120, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(100, 100, 100)
+                .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(100, Short.MAX_VALUE))
+        );
+
+        btnRegistrar.setText("REGISTRAR"); // Set text property
+
+        REGISTRAR.addTab("REGISTRAR", jPanel2);
+        // --- End of manually added code ---
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -152,6 +178,10 @@ public class FormularioIngresar extends javax.swing.JFrame {
 
     public JTextField getTxtCorreo() {
         return txtCorreo;
+    }
+
+    public JButton getBtnRegistrar() {
+        return btnRegistrar;
     }
 
     /**
@@ -200,5 +230,7 @@ public class FormularioIngresar extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField txtContraseña;
     private javax.swing.JTextField txtCorreo;
+    private javax.swing.JButton btnRegistrar;
+    private javax.swing.JPanel jPanel2; // Added
     // End of variables declaration//GEN-END:variables
 }

@@ -315,7 +315,43 @@ public class Vehiculos {
 
     return disponible;
 }
+public String obtenerPlacaDisponible(String marca, String color, String tipo, String transmision,
+                                     String sucursal, String blindaje, String cilindraje) {
+    String placa = null;
+    try {
+        ConectarBD conexion = new ConectarBD();
+        String sql = """
+            SELECT placa FROM Vehiculo 
+            WHERE id_marca = (SELECT id_marca FROM marca_vehiculo WHERE nombre_marca  = ?) 
+              AND id_color = (SELECT id_color FROM color_vehiculo WHERE nombre_color = ?) 
+              AND id_tipo_vehiculo = (SELECT id_tipo_vehiculo FROM tipo_vehiculo WHERE descripcion = ?)
+              AND id_transmision = (SELECT id_transmision FROM transmision_vehiculo WHERE descripcion = ?)
+              AND id_sucursal = (SELECT id_sucursal FROM sucursal WHERE nombre = ?)
+              AND id_blindaje = (SELECT id_blindaje FROM blindaje_vehiculo WHERE descripcion = ?)
+              AND id_cilindraje = (SELECT id_cilindraje FROM cilindraje_vehiculo WHERE descripcion = ?)
+              AND id_estado_vehiculo = 1
+            LIMIT 1
+        """;
 
+        PreparedStatement ps = conexion.getConexion().prepareStatement(sql);
+        ps.setString(1, marca);
+        ps.setString(2, color);
+        ps.setString(3, tipo);
+        ps.setString(4, transmision);
+        ps.setString(5, sucursal);
+        ps.setString(6, blindaje);
+        ps.setString(7, cilindraje);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            placa = rs.getString("placa");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Error al consultar disponibilidad: " + e.getMessage());
+    }
+    return placa;
+}
     
     
 }

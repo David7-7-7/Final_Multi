@@ -17,12 +17,14 @@ public class ControladorCliente implements ActionListener {
     CodigoPostal objetoCP;
     Vehiculos objetoVehiculo;
     Empleado objetoEmpleado;
+    Alquiler objetoAlquiler;
 
     // Formularios
     FormularioIngresar objetoVIngresar;
     FormularioCliente objetoVista;
     FormularioCliente_1 objetoCliente;
     FormularioGerente objetoVGerente;
+    FormularioAlquiler objetoVAlquiler;
 
     // Datos auxiliares
     String[] datos = new String[10];
@@ -84,25 +86,44 @@ public class ControladorCliente implements ActionListener {
            // agregarMarcaNueva();
             agregarVehiculoNuevo();
         }
-        if (objetoCliente != null && e.getSource() == objetoCliente.getBotonAveriguar()) {
-        String marca = objetoCliente.getMarca().getSelectedItem().toString();
-        String color = objetoCliente.getColor().getSelectedItem().toString();
-        String tipo = objetoCliente.getTipo().getSelectedItem().toString();
-        String transmision = objetoCliente.getTransmision().getSelectedItem().toString();
+                if (objetoCliente != null && e.getSource() == objetoCliente.getBotonAveriguar()) {
+            String marca = objetoCliente.getMarca().getSelectedItem().toString();
+            String color = objetoCliente.getColor().getSelectedItem().toString();
+            String tipo = objetoCliente.getTipo().getSelectedItem().toString();
+            String transmision = objetoCliente.getTransmision().getSelectedItem().toString();
+            String sucursal = objetoCliente.getSucursal().getSelectedItem().toString();
+            String blindaje = objetoCliente.getBlindaje().getSelectedItem().toString();
+            String cilindraje = objetoCliente.getCilindraje().getSelectedItem().toString();
+
+            String placaDisponible = objetoVehiculo.obtenerPlacaDisponible(
+                marca, color, tipo, transmision, sucursal, blindaje, cilindraje
+            );
+
+            if (placaDisponible != null) {
+                JOptionPane.showMessageDialog(null, "¡Vehículo disponible! Placa: " + placaDisponible);
+                objetoCliente.getTxtPlaca().setText(placaDisponible); // ✅ CORREGIDO
+            } else {
+                JOptionPane.showMessageDialog(null, "No hay vehículos disponibles con esos filtros.");
+            }
+        }
+        if (objetoCliente != null && e.getSource() == objetoCliente.getBotonAlquilar()) {
+         mostrarFormularioAlquiler();
+        }        
+
+    /*if (objetoCliente != null && e.getSource() == objetoCliente.getBtnReservar()) {
+        String idCliente = objetoCliente.getTxtIdCliente().getText();
+        String placa = objetoCliente.getPlaca().getText();
         String sucursal = objetoCliente.getSucursal().getSelectedItem().toString();
-        String blindaje = objetoCliente.getBlindaje().getSelectedItem().toString();
-        String cilindraje = objetoCliente.getCilindraje().getSelectedItem().toString();
+        String medioPago = objetoCliente.getPago().getSelectedItem().toString();
+        String estado = "Activo";
 
-        boolean hayDisponible = objetoVehiculo.verificarDisponibilidadFiltrada(
-            marca, color, tipo, transmision, sucursal, blindaje, cilindraje
-        );
-
-        if (hayDisponible) {
-            JOptionPane.showMessageDialog(null, "¡Hay al menos un vehículo disponible con esas características!");
+        if (objetoAlquiler.insertarAlquiler(placa, idCliente, sucursal, medioPago, estado)) {
+            JOptionPane.showMessageDialog(null, "Alquiler registrado exitosamente.");
         } else {
-            JOptionPane.showMessageDialog(null, "No hay vehículos disponibles con esos filtros.");
+            JOptionPane.showMessageDialog(null, "Error al registrar el alquiler.");
         }
-        }
+    }*/
+
     }
 
     private void mostrarFormularioClientee() {
@@ -122,7 +143,8 @@ public class ControladorCliente implements ActionListener {
         // Escuchadores
         objetoCliente.getBtnModificar().addActionListener(this);
         objetoCliente.getBtnEliminar().addActionListener(this);
-        objetoCliente.getBotonAveriguar().addActionListener(this);   
+        objetoCliente.getBotonAveriguar().addActionListener(this);  
+        objetoCliente.getBotonAlquilar().addActionListener(this); 
     }
 
     private void mostrarFormularioCliente() {
@@ -311,4 +333,42 @@ public class ControladorCliente implements ActionListener {
         objetoVista.getTxtCodigoP().setText("");
         objetoVista.getTxtContraseña().setText("");
     }
+    
+     private void mostrarFormularioAlquiler() {
+    objetoVAlquiler = new FormularioAlquiler();
+    objetoVAlquiler.setVisible(true);
+
+    // Puedes precargar datos si lo deseas:
+    objetoVAlquiler.getTxtID().setText(objetoCliente.getTxtIdCliente().getText());
+    objetoVAlquiler.getTxtPlaca().setText(objetoCliente.getTxtPlaca().getText());
+
+     private void mostrarFormularioAlquiler() {
+        objetoVAlquiler = new FormularioAlquiler();
+        objetoAlquiler = new Alquiler();
+        objetoVAlquiler.setVisible(true);
+
+        objetoVAlquiler.getTxtID().setText(objetoCliente.getTxtIdCliente().getText());
+        objetoVAlquiler.getTxtPlaca().setText(objetoCliente.getTxtPlaca().getText());
+
+        objetoVAlquiler.getBotonReserva().addActionListener(ev -> {
+            try {
+                String fechaSalida = objetoVAlquiler.getFechaSalida().getText();
+                String fechaEntrada = objetoVAlquiler.getFechaEntrada().getText();
+                int dias = objetoAlquiler.calcularDias(fechaSalida, fechaEntrada);
+                objetoVAlquiler.getTxtDias().setText(String.valueOf(dias));
+
+                double valorDia = Double.parseDouble(objetoVAlquiler.getTxtValorDia().getText());
+                String descuento = objetoVAlquiler.getDescuento().getSelectedItem().toString();
+                double total = objetoAlquiler.calcularTotal(dias, valorDia, descuento);
+                objetoVAlquiler.getTxtTotal().setText(String.valueOf(total));
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Error al calcular reserva: " + ex.getMessage());
+            }
+        });
+    }
+
+    }
 }
+
+
