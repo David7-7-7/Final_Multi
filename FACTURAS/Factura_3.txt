@@ -1,0 +1,11 @@
+===== FACTURA =====
+ID Factura: 3
+Valor Total: $1200000,00
+ID Cliente: 1
+Nombre Cliente: Carlos
+Placa Vehículo: ABCS123
+Descuento: 5%
+Sucursal: Sucursal Norte
+ID Empleado: 1
+Tipo de Pago: Efectivo
+Saldo Restante: $0,00
